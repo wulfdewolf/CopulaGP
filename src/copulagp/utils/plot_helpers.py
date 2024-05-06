@@ -1,10 +1,11 @@
-import torch
-from torch import Tensor
-from gpytorch.settings import num_likelihood_samples
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
+from gpytorch.settings import num_likelihood_samples
+from torch import Tensor
 
 from . import plot_conf as conf
+
 #all of these imports are for Plot_Fit only
 
 def Plot_Copula_Density(axes, X, Y, interval_ends, shade=False, color='C0', mrg=.2):
@@ -15,8 +16,9 @@ def Plot_Copula_Density(axes, X, Y, interval_ends, shade=False, color='C0', mrg=
     assert len(interval_ends)-1 == len(axes)
     titles = [f"{s}-{e}" for s,e in zip(interval_ends[:-1],interval_ends[1:])]
     for s,e,ax,name in zip(interval_ends[:-1],interval_ends[1:],axes.flatten(),titles):
-        sns.kdeplot(*Y[(X[:]>=s) & (X[:]<e)].T, ax=ax, 
-                    shade=shade,  shade_lowest=False, 
+        x, y = Y[(X[:]>=s) & (X[:]<e)].T
+        sns.kdeplot(y=y, x=x, ax=ax, 
+                    shade=shade,  thresh=0.05, 
                     alpha=0.7, color=color, n_levels=6)
         ax.set(title=name, xlim=(-mrg,1+mrg), ylim=(-mrg,1+mrg))
 
@@ -111,8 +113,8 @@ def Plot_MixModel_Param_MCMC(ax: list, model,
         particles: int
             Number of particles for MCMC
     '''
-    from torch import no_grad, Size
     from numpy import mean, std
+    from torch import Size, no_grad
     assert len(ax)==2
     
     def plot_gps(sampled, axis, skip_ind=False):

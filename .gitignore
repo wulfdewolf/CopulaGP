@@ -12,3 +12,5 @@ figures*/
 list*.sh
 *.cache*
 arch/
+build/
+*.egg-info/

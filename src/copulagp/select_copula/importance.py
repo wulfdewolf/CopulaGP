@@ -1,4 +1,5 @@
-from torch import linspace, no_grad, bool, Size, Tensor, arange
+from torch import Size, Tensor, arange, bool, linspace, no_grad
+
 
 def evaluate(model):
     # define uniform test set (optionally on GPU)
@@ -13,7 +14,7 @@ def evaluate(model):
 def important_copulas(model):
     mixes = evaluate(model)
     which = (mixes.mean(dim=1)>0.10).type(bool) # if at least higher than 10% on average -> significant
-    return which
+    return which.cpu()
 
 def reduce_model(bvcopulas: list, which: Tensor) -> list:
     assert len(bvcopulas)==len(which)
